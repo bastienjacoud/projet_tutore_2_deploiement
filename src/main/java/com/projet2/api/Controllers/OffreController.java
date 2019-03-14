@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "https://polymeetup.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/api/offers")
 public class OffreController {
