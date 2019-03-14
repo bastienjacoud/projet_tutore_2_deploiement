@@ -7,6 +7,7 @@ import com.projet2.api.Services.IChoixService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,15 +21,27 @@ public class ChoixServiceImpl implements IChoixService {
 
     @Override
     public List<ChoixEntity> addChoixEtudiant(Integer idEtudiant, List<Integer> idEntreprises, List<Integer> idSuperMatchEntreprise){
+        // Reset (remise à 0) des valeurs des anciennes données
+        List<ChoixEntity> oldValues = getOldChoixList(idEtudiant, idEntreprises, idSuperMatchEntreprise, RoleEnum.ETUDIANT);
+        choixRepository.saveAll(oldValues);
+
+        // Mise à jour des données existantes et insertion des nouvelles données
         List<ChoixEntity> values = getChoixList(idEtudiant, idEntreprises, idSuperMatchEntreprise, RoleEnum.ETUDIANT);
         choixRepository.saveAll(values);
+
         return values;
     }
 
     @Override
-    public List<ChoixEntity> addChoixEntreprise(Integer idEntreprise, List<Integer> idEtudiants, List<Integer> idSuperMatchEntreprise){
-        List<ChoixEntity> values = getChoixList(idEntreprise, idEtudiants, idSuperMatchEntreprise, RoleEnum.ENTREPRISE);
+    public List<ChoixEntity> addChoixEntreprise(Integer idEntreprise, List<Integer> idEtudiants, List<Integer> idSuperMatchEtudiant){
+        // Reset (remise à 0) des valeurs des anciennes données
+        List<ChoixEntity> oldValues = getOldChoixList(idEntreprise, idEtudiants, idSuperMatchEtudiant, RoleEnum.ENTREPRISE);
+        choixRepository.saveAll(oldValues);
+
+        // Mise à jour des données existantes et insertion des nouvelles données
+        List<ChoixEntity> values = getChoixList(idEntreprise, idEtudiants, idSuperMatchEtudiant, RoleEnum.ENTREPRISE);
         choixRepository.saveAll(values);
+
         return values;
     }
 
@@ -66,7 +79,7 @@ public class ChoixServiceImpl implements IChoixService {
         matchs.addAll(supermatchs);
         return matchs;
     }
-    //TODO gérer le cas où une valeur était dans le tableau et n'est pas envoyée par l'api. Il faut alors mettre la valeur à 0.
+
     private List<ChoixEntity> getChoixList(Integer id, List<Integer> idMatch, boolean isSuperMatch, RoleEnum role){
         return idMatch.stream()
                 .map(id1 -> {
@@ -120,6 +133,47 @@ public class ChoixServiceImpl implements IChoixService {
                     return res;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private List<ChoixEntity> getOldChoixList(Integer id, List<Integer> idList, List<Integer> idSuperMatchList, RoleEnum role){
+        List<ChoixEntity> oldValues = new ArrayList<>();
+        if(role == RoleEnum.ETUDIANT){
+            oldValues = choixRepository.findAllByIdEtudiant(id);
+            oldValues = oldValues.stream().map(v -> {
+                if(!idList.contains(v.getIdEntreprise())){
+                    v.setChoixEtudiant(0);
+                    v.setChoixEntreprise(0);
+                    v.setSuperMatchEtudiant(0);
+                    v.setSuperMatchEntreprise(0);
+                }
+                else if(!idSuperMatchList.contains(v.getIdEntreprise())){
+                    v.setChoixEtudiant(0);
+                    v.setChoixEntreprise(0);
+                    v.setSuperMatchEtudiant(0);
+                    v.setSuperMatchEntreprise(0);
+                }
+                return v;
+            }).collect(Collectors.toList());
+        }
+        else if(role == RoleEnum.ENTREPRISE){
+            oldValues = choixRepository.findAllByIdEntreprise(id);
+            oldValues = oldValues.stream().map(v -> {
+                if(!idList.contains(v.getIdEtudiant())){
+                    v.setChoixEtudiant(0);
+                    v.setChoixEntreprise(0);
+                    v.setSuperMatchEtudiant(0);
+                    v.setSuperMatchEntreprise(0);
+                }
+                else if(!idSuperMatchList.contains(v.getIdEtudiant())){
+                    v.setChoixEtudiant(0);
+                    v.setChoixEntreprise(0);
+                    v.setSuperMatchEtudiant(0);
+                    v.setSuperMatchEntreprise(0);
+                }
+                return v;
+            }).collect(Collectors.toList());
+        }
+        return oldValues;
     }
 
     @Override

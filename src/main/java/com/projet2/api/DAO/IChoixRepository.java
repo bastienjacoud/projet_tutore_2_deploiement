@@ -12,4 +12,6 @@ public interface IChoixRepository extends JpaRepository<ChoixEntity, Integer> {
     List<ChoixEntity> findAllByIdEtudiantAndSuperMatchEtudiant(Integer idEtudiant, Integer superMatchEtudiant);
     ChoixEntity findByIdEntrepriseAndIdEtudiant(Integer idEntreprise, Integer IdEtudiant);
     List<ChoixEntity> findAll();
+    List<ChoixEntity> findAllByIdEtudiant(Integer idEtudiant);
+    List<ChoixEntity> findAllByIdEntreprise(Integer idEntreprise);
 }

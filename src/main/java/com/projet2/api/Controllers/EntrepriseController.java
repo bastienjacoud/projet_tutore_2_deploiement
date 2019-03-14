@@ -2,7 +2,6 @@ package com.projet2.api.Controllers;
 
 import com.google.gson.Gson;
 import com.projet2.api.Entities.EntrepriseEntity;
-import com.projet2.api.Entities.EtudiantEntity;
 import com.projet2.api.Enums.RoleEnum;
 import com.projet2.api.Helpers.JwtHelper;
 import com.projet2.api.Services.IEntrepriseService;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.management.relation.Role;
 import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)

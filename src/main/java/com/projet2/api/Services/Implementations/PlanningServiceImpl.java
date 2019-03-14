@@ -2,22 +2,17 @@ package com.projet2.api.Services.Implementations;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import com.projet2.api.DAO.IPlanningRepository;
 import com.projet2.api.Entities.ChoixEntity;
 import com.projet2.api.Entities.PlanningEntity;
 import com.projet2.api.Services.IPlanningService;
 
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

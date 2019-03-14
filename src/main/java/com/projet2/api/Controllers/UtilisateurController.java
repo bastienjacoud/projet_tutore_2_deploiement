@@ -35,9 +35,9 @@ public class UtilisateurController {
                 RoleEnum role = RoleEnum.NONE;
                 int id = 0;
 
-                if(utilisateurEntity.getAdminitrateurIdAdministrateur() != null){
+                if(utilisateurEntity.getAdministrateurIdAdministrateur() != null){
                     role = RoleEnum.ADMIN;
-                    id = utilisateurEntity.getAdminitrateurIdAdministrateur();
+                    id = utilisateurEntity.getAdministrateurIdAdministrateur();
                 } else if(utilisateurEntity.getEntrepriseIdEntreprise() != null){
                     role = RoleEnum.ENTREPRISE;
                     id = utilisateurEntity.getEntrepriseIdEntreprise();
@@ -78,7 +78,7 @@ public class UtilisateurController {
                         utilisateur.setEtudiantIdEtudiant(Integer.parseInt(body.get("id")));
                     }
                     else if(role == RoleEnum.ADMIN){
-                        utilisateur.setAdminitrateurIdAdministrateur(Integer.parseInt(body.get("id")));
+                        utilisateur.setAdministrateurIdAdministrateur(Integer.parseInt(body.get("id")));
                     }
                     utilisateurService.save(utilisateur);
                     return new ResponseEntity<>(HttpStatus.OK);

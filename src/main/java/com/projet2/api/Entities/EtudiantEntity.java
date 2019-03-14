@@ -15,7 +15,6 @@ public class EtudiantEntity {
     private byte[] avatar;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_etudiant")
     public Integer getIdEtudiant() {
         return idEtudiant;
@@ -46,7 +45,6 @@ public class EtudiantEntity {
     }
 
     @Basic
-    @Lob
     @Column(name = "cv")
     public byte[] getCv() {
         return cv;

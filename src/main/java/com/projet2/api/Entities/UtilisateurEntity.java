@@ -11,10 +11,9 @@ public class UtilisateurEntity {
     private String motPasse;
     private Integer etudiantIdEtudiant;
     private Integer entrepriseIdEntreprise;
-    private Integer adminitrateurIdAdministrateur;
+    private Integer administrateurIdAdministrateur;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_utilisateur")
     public Integer getIdUtilisateur() {
         return idUtilisateur;
@@ -45,7 +44,7 @@ public class UtilisateurEntity {
     }
 
     @Basic
-    @Column(name = "Etudiant_id_etudiant")
+    @Column(name = "etudiant_id_etudiant")
     public Integer getEtudiantIdEtudiant() {
         return etudiantIdEtudiant;
     }
@@ -55,7 +54,7 @@ public class UtilisateurEntity {
     }
 
     @Basic
-    @Column(name = "Entreprise_id_entreprise")
+    @Column(name = "entreprise_id_entreprise")
     public Integer getEntrepriseIdEntreprise() {
         return entrepriseIdEntreprise;
     }
@@ -65,13 +64,13 @@ public class UtilisateurEntity {
     }
 
     @Basic
-    @Column(name = "Adminitrateur_id_administrateur")
-    public Integer getAdminitrateurIdAdministrateur() {
-        return adminitrateurIdAdministrateur;
+    @Column(name = "administrateur_id_administrateur")
+    public Integer getAdministrateurIdAdministrateur() {
+        return administrateurIdAdministrateur;
     }
 
-    public void setAdminitrateurIdAdministrateur(Integer adminitrateurIdAdministrateur) {
-        this.adminitrateurIdAdministrateur = adminitrateurIdAdministrateur;
+    public void setAdministrateurIdAdministrateur(Integer administrateurIdAdministrateur) {
+        this.administrateurIdAdministrateur = administrateurIdAdministrateur;
     }
 
     @Override
@@ -84,11 +83,11 @@ public class UtilisateurEntity {
                 Objects.equals(motPasse, that.motPasse) &&
                 Objects.equals(etudiantIdEtudiant, that.etudiantIdEtudiant) &&
                 Objects.equals(entrepriseIdEntreprise, that.entrepriseIdEntreprise) &&
-                Objects.equals(adminitrateurIdAdministrateur, that.adminitrateurIdAdministrateur);
+                Objects.equals(administrateurIdAdministrateur, that.administrateurIdAdministrateur);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idUtilisateur, login, motPasse, etudiantIdEtudiant, entrepriseIdEntreprise, adminitrateurIdAdministrateur);
+        return Objects.hash(idUtilisateur, login, motPasse, etudiantIdEtudiant, entrepriseIdEntreprise, administrateurIdAdministrateur);
     }
 }

@@ -1,7 +1,6 @@
 package com.projet2.api.Entities;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -13,7 +12,6 @@ public class PlanningEntity {
     private Integer retard;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_planning")
     public Integer getIdPlanning() {
         return idPlanning;
