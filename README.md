@@ -1,1 +1,2 @@
-# projet_tutore_2_deploiement
+# How to launch
+./mvnw sprint-boot:run
