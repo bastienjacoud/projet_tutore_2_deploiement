@@ -26,7 +26,19 @@ public class EtudiantServiceImpl implements IEtudiantService {
     }
 
     @Override
-    public void save(EtudiantEntity etudiant) {
+    public EtudiantEntity save(EtudiantEntity etudiant) {
         etudiantRepository.save(etudiant);
+        return etudiant;
+    }
+
+    @Override
+    public List<EtudiantEntity> saveAll(List<EtudiantEntity> etudiants) {
+        etudiantRepository.saveAll(etudiants);
+        return etudiants;
+    }
+
+    @Override
+    public void deleteByIdStudent(Integer idEtudiant) {
+        etudiantRepository.deleteById(idEtudiant);
     }
 }

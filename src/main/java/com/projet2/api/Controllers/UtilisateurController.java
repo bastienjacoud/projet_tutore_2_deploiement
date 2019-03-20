@@ -11,12 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-@CrossOrigin(origins = "https://polymeetup.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/api/users")
 public class UtilisateurController {
@@ -84,8 +80,73 @@ public class UtilisateurController {
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
                 else {
-                    return new ResponseEntity<>(new Exception("Cette adresse email est déjà utilisée"), HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("Cette adresse email est déjà utilisée", HttpStatus.BAD_REQUEST);
                 }
+            }
+            else{
+                return (ResponseEntity<?>) res.get("responseError");
+            }
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("")
+    public ResponseEntity<?> getAll(@RequestHeader HashMap<String, String> header) {
+        try{
+            Map<String, Object> res = JwtHelper.checkTokenInformations(Collections.singletonList(RoleEnum.ADMIN), header.get("identificationtoken"));
+            if(res.get("responseError") == null){
+                List<UtilisateurEntity> utilisateurs = utilisateurService.findAll();
+                return new ResponseEntity<>(utilisateurs, HttpStatus.OK);
+            }
+            else{
+                return (ResponseEntity<?>) res.get("responseError");
+            }
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUser(@RequestHeader HashMap<String, String> header,
+                                     @PathVariable Integer id) {
+        try{
+            Map<String, Object> res = JwtHelper.checkTokenInformations(Arrays.asList(RoleEnum.ADMIN, RoleEnum.ENTREPRISE, RoleEnum.ETUDIANT), header.get("identificationtoken"));
+            if(res.get("responseError") == null){
+                UtilisateurEntity utilisateur;
+                switch ((RoleEnum)res.get("role")){
+                    case ADMIN:
+                        utilisateur = utilisateurService.findByIdAdmin(id);
+                        break;
+                    case ENTREPRISE:
+                        utilisateur = utilisateurService.findByIdEntreprise(id);
+                        break;
+                    case ETUDIANT:
+                        utilisateur = utilisateurService.findByIdEtudiant(id);
+                        break;
+                    default:
+                        utilisateur = new UtilisateurEntity();
+                        break;
+                }
+                return new ResponseEntity<>(utilisateur, HttpStatus.OK);
+            }
+            else{
+                return (ResponseEntity<?>) res.get("responseError");
+            }
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("")
+    public ResponseEntity<?> updateUser(@RequestHeader HashMap<String, String> header, @RequestBody HashMap<String, Object> body){
+        try{
+            Map<String, Object> res = JwtHelper.checkTokenInformations(Arrays.asList(RoleEnum.ADMIN, RoleEnum.ETUDIANT, RoleEnum.ENTREPRISE), header.get("identificationtoken"));
+
+            if(res.get("responseError") == null){
+                UtilisateurEntity utilisateur = modelMapper.map(body.get("user"), UtilisateurEntity.class);
+                utilisateurService.save(utilisateur);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
             else{
                 return (ResponseEntity<?>) res.get("responseError");

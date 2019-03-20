@@ -15,6 +15,7 @@ public class EtudiantEntity {
     private byte[] avatar;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_etudiant")
     public Integer getIdEtudiant() {
         return idEtudiant;

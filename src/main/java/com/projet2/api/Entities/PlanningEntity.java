@@ -12,6 +12,7 @@ public class PlanningEntity {
     private Integer retard;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_planning")
     public Integer getIdPlanning() {
         return idPlanning;

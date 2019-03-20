@@ -1,7 +1,9 @@
 package com.projet2.api.Controllers;
 
+import com.projet2.api.DTO.PlanningDTO;
 import com.projet2.api.Entities.ChoixEntity;
-import com.projet2.api.Entities.PlanningEntity;
+import com.projet2.api.Entities.EntrepriseEntity;
+import com.projet2.api.Entities.EtudiantEntity;
 import com.projet2.api.Enums.RoleEnum;
 import com.projet2.api.Helpers.JwtHelper;
 import com.projet2.api.Services.IChoixService;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "https://polymeetup.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/api")
 public class ChoixPlanningController {
@@ -85,7 +86,7 @@ public class ChoixPlanningController {
     @GetMapping("/choices")
     public ResponseEntity<?> getAllChoices(@RequestHeader HashMap<String, String> header) {
         try{
-            Map<String, Object> res = JwtHelper.checkTokenInformations(Arrays.asList(RoleEnum.ENTREPRISE, RoleEnum.ETUDIANT), header.get("identificationtoken"));
+            Map<String, Object> res = JwtHelper.checkTokenInformations(Arrays.asList(RoleEnum.ADMIN, RoleEnum.ENTREPRISE, RoleEnum.ETUDIANT), header.get("identificationtoken"));
             if(res.get("responseError") == null){
                 if(res.get("role") == RoleEnum.ETUDIANT){
                     int idEtudiant = (int)res.get("id");
@@ -95,6 +96,10 @@ public class ChoixPlanningController {
                 else if(res.get("role") == RoleEnum.ENTREPRISE){
                     int idEntreprise = (int)res.get("id");
                     List<ChoixEntity> choix = choixService.findByIdEntreprise(idEntreprise);
+                    return new ResponseEntity<>(choix, HttpStatus.OK);
+                }
+                else if(res.get("role") == RoleEnum.ADMIN){
+                    List<ChoixEntity> choix = choixService.findAll();
                     return new ResponseEntity<>(choix, HttpStatus.OK);
                 }
                 else{
@@ -116,12 +121,32 @@ public class ChoixPlanningController {
      */
 
     @GetMapping("/schedules")
-    public ResponseEntity<?> getAllSchedules(@RequestHeader HashMap<String, String> header) {
+    public ResponseEntity<?> getAllSchedules(@RequestHeader HashMap<String, String> header,
+                                             @RequestParam(value = "idStudent", defaultValue = "0") Integer idStudent,
+                                             @RequestParam(value = "idCompany", defaultValue = "0") Integer idCompany) {
         try{
             Map<String, Object> res = JwtHelper.checkTokenInformations(Arrays.asList(RoleEnum.ADMIN, RoleEnum.ENTREPRISE, RoleEnum.ETUDIANT), header.get("identificationtoken"));
             if(res.get("responseError") == null){
-                List<PlanningEntity> creneaux = planningService.findAll();
-                return new ResponseEntity<>(creneaux, HttpStatus.OK);
+
+                List<PlanningDTO> result = new ArrayList<>();
+
+                List<Object[]> elts;
+
+                if(idStudent != 0) {
+                    elts = planningService.findAllByStudentDetailed(idStudent);
+                } else if (idCompany != 0) {
+                    elts = planningService.findAllByCompanyDetailed(idCompany);
+                } else {
+                    elts = planningService.findAllDetailed();
+                }
+
+                for (Object[] elt : elts) {
+                    PlanningDTO planningDTO = new PlanningDTO((Integer)elt[0], (EntrepriseEntity)elt[1], (EtudiantEntity)elt[2]);
+
+                    result.add(planningDTO);
+                }
+
+                return new ResponseEntity<>(result, HttpStatus.OK);
             }
             else{
                 return (ResponseEntity<?>) res.get("responseError");
@@ -131,20 +156,29 @@ public class ChoixPlanningController {
         }
     }
 
-    @GetMapping("/schedules/generate/{forced}")
-    public ResponseEntity<?> generate(@RequestHeader HashMap<String, String> header, @PathVariable("forced") Boolean isForced) {
+    @GetMapping("/schedules/generate")
+    public ResponseEntity<?> generate(@RequestHeader HashMap<String, String> header, @RequestParam(value = "force", defaultValue = "false") Boolean isForced) {
         try{
-            Map<String, Object> res = JwtHelper.checkTokenInformations(Arrays.asList(RoleEnum.ADMIN), header.get("identificationtoken"));
+            Map<String, Object> res = JwtHelper.checkTokenInformations(Collections.singletonList(RoleEnum.ADMIN), header.get("identificationtoken"));
             if(res.get("responseError") == null){
                 // On vérifie si le planning n'est pas déjà généré
-                List<PlanningEntity> creneaux = planningService.findAll();
+                List<Object[]> creneaux = planningService.findAll();
                 if(!creneaux.isEmpty() && !isForced)
                     return new ResponseEntity<>("Le planning est déjà généré", HttpStatus.OK);
                 else {
                     List<ChoixEntity> choix = choixService.findAll();
-                    planningService.generate(choix);
+                    List<ChoixEntity> planningOpti = planningService.generate(choix);
 
-                    return new ResponseEntity<>(planningService.findAll(), HttpStatus.OK);
+                    List<PlanningDTO> result = new ArrayList<>();
+
+                    for (Object[] elt : planningService.findAllDetailed()) {
+                        PlanningDTO planningDTO = new PlanningDTO((Integer)elt[0], (EntrepriseEntity)elt[1], (EtudiantEntity)elt[2]);
+
+                        result.add(planningDTO);
+                    }
+                    
+
+                    return new ResponseEntity<>(result, HttpStatus.OK);
                 }
             }
             else{

@@ -12,6 +12,7 @@ public class OffreEntity {
     private byte[] offre;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_offre")
     public Integer getIdOffre() {
         return idOffre;

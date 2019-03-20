@@ -15,6 +15,7 @@ public class ChoixEntity {
     private Integer superMatchEntreprise;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_choix")
     public Integer getIdChoix() {
         return idChoix;

@@ -7,5 +7,7 @@ import java.util.List;
 public interface IEtudiantService {
     List<EtudiantEntity> findAll();
     EtudiantEntity findById(int idEtudiant) throws Exception;
-    void save(EtudiantEntity etudiant);
+    EtudiantEntity save(EtudiantEntity etudiant);
+    List<EtudiantEntity> saveAll(List<EtudiantEntity> etudiants);
+    void deleteByIdStudent(Integer idEtudiant);
 }

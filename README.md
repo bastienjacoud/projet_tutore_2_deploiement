@@ -1,5 +1,17 @@
-# projet_tutore_2
+# README projet_tutore_2
 Projet Tutoré 2 Polytech 5A Apprentissage
+
+## Déploiement de l'application
+
+Le déploiement à été automatisé pour se déployer sur Heroku. 
+Pour cela, il faut se placer sur la branche master, merger les modifications de la branche de développement sur master.
+Il suffit ensuite de se placer dans le dossier front-polymeetup puis de taper la commande suivante :
+ - npm run build
+ 
+Le projet angular est alors compilé en mode production, placé dans le dossier static du serveur. Le serveur va ensuite remplacer ce qui existait dans le projet de déploiement. 
+Il ne reste plus qu'à push le projet de déploiement et les modifications seront en ligne. 
+
+ATTENTION TOUTEFOIS : Pour que le déploiement s'effectue correctement, il faut que les deux repository GIT se situent (développement et déploiement) se situent l'un à côté de l'autre au niveau de l'arborescence de l'ordinateur. 
 
 ## Equipe
 

@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class JwtHelper {
 
-    //private static String secret  = "toto";
-    private static Algorithm algorithm = Algorithm.HMAC256("Ma chaine de caractères");
+    private static String secret  = "m8sugsCdSoKBxh+lHnJWC4Bs$B=!m+J_1LnFT@PFQJ!?FOz=xB$D!x_$c=W07E&ElH?CTgi6cc-qgZV7oaKw^IeN6hCfaqCUmvbIPMJa2ph*Ex?UURyl3P3yyqj2r0aI%J|+tR+aCtymmRHNC-*D-15@7rykY2Mx^V3g6EDoDHMj4NX_C6PXeJbR8De8&#K9xoY816vp=-=@xCMMbk?RqOcz0jwiRLi!BOdl0GkOI$mskn86MBt4GW|&VW1A6MeG";
+    private static Algorithm algorithm = Algorithm.HMAC256(secret);
 
     public static String getToken(@NotNull RoleEnum role, int id, Date dateExpiration){
         return JWT.create()

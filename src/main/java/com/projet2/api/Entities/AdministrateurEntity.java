@@ -11,6 +11,7 @@ public class AdministrateurEntity {
     private String prenom;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_administrateur")
     public Integer getIdAdministrateur() {
         return idAdministrateur;

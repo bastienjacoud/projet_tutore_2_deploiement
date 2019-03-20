@@ -30,4 +30,15 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
         entrepriseRepository.save(entreprise);
         return entreprise;
     }
+
+    @Override
+    public List<EntrepriseEntity> saveAll(List<EntrepriseEntity> entreprises) {
+        entrepriseRepository.saveAll(entreprises);
+        return entreprises;
+    }
+
+    @Override
+    public void deleteByIdCompany(Integer idEntreprise) {
+        entrepriseRepository.deleteById(idEntreprise);
+    }
 }

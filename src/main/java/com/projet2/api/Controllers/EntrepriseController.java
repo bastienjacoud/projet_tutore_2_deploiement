@@ -1,10 +1,13 @@
 package com.projet2.api.Controllers;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.projet2.api.Entities.EntrepriseEntity;
+import com.projet2.api.Entities.UtilisateurEntity;
 import com.projet2.api.Enums.RoleEnum;
 import com.projet2.api.Helpers.JwtHelper;
 import com.projet2.api.Services.IEntrepriseService;
+import com.projet2.api.Services.IUtilisateurService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,15 +15,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
-@CrossOrigin(origins = "https://polymeetup.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/api/companies")
 public class EntrepriseController {
 
     @Autowired
     private IEntrepriseService entrepriseService;
+
+    @Autowired
+    private IUtilisateurService utilisateurService;
 
     private ModelMapper modelMapper = new ModelMapper();
 
@@ -43,9 +49,9 @@ public class EntrepriseController {
     }
 
     @GetMapping("/{idCompany}")
-    public ResponseEntity<?> getById(@PathVariable("idCompany") Integer idCompany, @RequestHeader HashMap<String, String> header) {
+    public ResponseEntity<?> getByIdCompany(@PathVariable("idCompany") Integer idCompany,@RequestHeader HashMap<String, String> header) {
         try{
-            Map<String, Object> res = JwtHelper.checkTokenInformations(Arrays.asList(RoleEnum.ADMIN, RoleEnum.ETUDIANT), header.get("identificationtoken"));
+            Map<String, Object> res = JwtHelper.checkTokenInformations(Arrays.asList(RoleEnum.ADMIN, RoleEnum.ETUDIANT, RoleEnum.ENTREPRISE), header.get("identificationtoken"));
             if(res.get("responseError") == null){
                 EntrepriseEntity entreprise = entrepriseService.findById(idCompany);
                 return new ResponseEntity<>(entreprise, HttpStatus.OK);
@@ -68,8 +74,37 @@ public class EntrepriseController {
                 if(avatar != null){
                     entreprise.setAvatar(avatar.getBytes());
                 }
-                entrepriseService.save(entreprise);
-                return new ResponseEntity<>(HttpStatus.OK);
+                entreprise = entrepriseService.save(entreprise);
+                //TODO vérifier que l'on ne renvoie pas les fichiers
+                entreprise.setAvatar(null);
+                return new ResponseEntity<>(entreprise, HttpStatus.OK);
+            }
+            else{
+                return (ResponseEntity<?>) res.get("responseError");
+            }
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<?> addCompanies(@RequestHeader HashMap<String, String> header, @RequestBody HashMap<String, Object> body){
+        try{
+            Map<String, Object> res = JwtHelper.checkTokenInformations(Collections.singletonList(RoleEnum.ADMIN), header.get("identificationtoken"));
+            if(res.get("responseError") == null){
+                Type entreprisesType = new TypeToken<ArrayList<EntrepriseEntity>>(){}.getType();
+                List<EntrepriseEntity> entreprises = modelMapper.map(body.get("companies"), entreprisesType);
+                entreprises = entrepriseService.saveAll(entreprises);
+
+                Type utilisateursType = new TypeToken<ArrayList<UtilisateurEntity>>(){}.getType();
+                List<UtilisateurEntity> utilisateurs = modelMapper.map(body.get("companies"), utilisateursType);
+
+                for (int i=0;i<entreprises.size();i++){
+                    utilisateurs.get(i).setEntrepriseIdEntreprise(entreprises.get(i).getIdEntreprise());
+                }
+                utilisateurService.saveAll(utilisateurs);
+
+                return new ResponseEntity<>(entreprises, HttpStatus.OK);
             }
             else{
                 return (ResponseEntity<?>) res.get("responseError");
@@ -103,12 +138,28 @@ public class EntrepriseController {
                         return new ResponseEntity<>(HttpStatus.OK);
                     }
                     else {
-                        return new ResponseEntity<>("Etudiant non trouvé.", HttpStatus.NO_CONTENT);
+                        return new ResponseEntity<>("Entreprise non trouvée.", HttpStatus.NO_CONTENT);
                     }
                 }
                 else {
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("Erreur lors de la récupération des données JSON.", HttpStatus.BAD_REQUEST);
                 }
+            }
+            else{
+                return (ResponseEntity<?>) res.get("responseError");
+            }
+        } catch (Exception e){
+            return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{idCompany}")
+    public ResponseEntity<?> deleteById(@PathVariable("idCompany") Integer idCompany, @RequestHeader HashMap<String, String> header) {
+        try{
+            Map<String, Object> res = JwtHelper.checkTokenInformations(Collections.singletonList(RoleEnum.ADMIN), header.get("identificationtoken"));
+            if(res.get("responseError") == null){
+                entrepriseService.deleteByIdCompany(idCompany);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
             else{
                 return (ResponseEntity<?>) res.get("responseError");
