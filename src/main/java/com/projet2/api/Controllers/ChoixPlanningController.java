@@ -164,7 +164,7 @@ public class ChoixPlanningController {
                 // On vérifie si le planning n'est pas déjà généré
                 List<Object[]> creneaux = planningService.findAll();
                 if(!creneaux.isEmpty() && !isForced)
-                    return new ResponseEntity<>("Le planning est déjà généré", HttpStatus.OK);
+                    return new ResponseEntity<>(new Exception("Le planning est déjà généré"), HttpStatus.CONFLICT);
                 else {
                     List<ChoixEntity> choix = choixService.findAll();
                     List<ChoixEntity> planningOpti = planningService.generate(choix);

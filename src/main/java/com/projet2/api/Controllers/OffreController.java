@@ -40,8 +40,8 @@ public class OffreController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addOffer(@RequestHeader HashMap<String, String> header, @RequestParam("idCompany") Integer idCompany, @RequestParam(value = "offer", required = false) MultipartFile offer){
-        return addOrUpdateOffre(header, idCompany, offer);
+    public ResponseEntity<?> addOffer(@RequestHeader HashMap<String, String> header, @RequestParam("idCompany") Integer idCompany, @RequestParam("titre") String titre, @RequestParam(value = "offer", required = false) MultipartFile offer){
+        return addOrUpdateOffre(header, idCompany, titre, offer);
     }
 
     @DeleteMapping("/{idOffer}")
@@ -61,20 +61,21 @@ public class OffreController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateOffer(@RequestHeader HashMap<String, String> header, @RequestParam("idCompany") Integer idCompany, @RequestParam(value = "offer", required = false) MultipartFile offer){
-        return addOrUpdateOffre(header, idCompany, offer);
+    public ResponseEntity<?> updateOffer(@RequestHeader HashMap<String, String> header, @RequestParam("idCompany") Integer idCompany, @RequestParam("titre") String titre, @RequestParam(value = "offer", required = false) MultipartFile offer){
+        return addOrUpdateOffre(header, idCompany, titre, offer);
     }
 
     /**
      * Méthode commune pour l'ajout et l'update
      * @param header
      */
-    private ResponseEntity<?> addOrUpdateOffre(HashMap<String, String> header, Integer idCompany, MultipartFile offer){
+    private ResponseEntity<?> addOrUpdateOffre(HashMap<String, String> header, Integer idCompany, String titre, MultipartFile offer){
         try{
             Map<String, Object> res = JwtHelper.checkTokenInformations(Collections.singletonList(RoleEnum.ENTREPRISE), header.get("identificationtoken"));
             if(res.get("responseError") == null){
                 OffreEntity offre = new OffreEntity();
                 offre.setIdEntreprise(idCompany);
+                offre.setTitre(titre);
                 offre.setOffre(offer.getBytes());
                 offre = offreService.save(offre);
                 //TODO vérifier que l'on ne renvoie pas l'offre
