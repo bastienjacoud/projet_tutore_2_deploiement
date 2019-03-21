@@ -1,5 +1,7 @@
 package com.projet2.api.Controllers;
 
+import com.projet2.api.DAO.IEntrepriseRepository;
+import com.projet2.api.DAO.IEtudiantRepository;
 import com.projet2.api.DTO.PlanningDTO;
 import com.projet2.api.Entities.ChoixEntity;
 import com.projet2.api.Entities.EntrepriseEntity;
@@ -7,6 +9,7 @@ import com.projet2.api.Entities.EtudiantEntity;
 import com.projet2.api.Enums.RoleEnum;
 import com.projet2.api.Helpers.JwtHelper;
 import com.projet2.api.Services.IChoixService;
+import com.projet2.api.Services.IEtudiantService;
 import com.projet2.api.Services.IPlanningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,12 @@ public class ChoixPlanningController {
 
     @Autowired
     private IChoixService choixService;
+
+    @Autowired
+    private IEtudiantRepository etudiantRepository;
+
+    @Autowired
+    private IEntrepriseRepository entrepriseRepository;
 
     /**
      *
@@ -166,6 +175,13 @@ public class ChoixPlanningController {
                 if(!creneaux.isEmpty() && !isForced)
                     return new ResponseEntity<>(new Exception("Le planning est déjà généré"), HttpStatus.CONFLICT);
                 else {
+                    // On insère les étudiants et les entreprises non liés
+                    for (EtudiantEntity etu : etudiantRepository.findAll()) {
+                        for(EntrepriseEntity ent : entrepriseRepository.findAll()) {
+                            choixService.insertDefaultChoice(etu, ent);
+                        }
+                    }
+
                     List<ChoixEntity> choix = choixService.findAll();
                     List<ChoixEntity> planningOpti = planningService.generate(choix);
 

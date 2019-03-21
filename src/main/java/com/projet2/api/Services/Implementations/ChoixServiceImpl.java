@@ -2,6 +2,8 @@ package com.projet2.api.Services.Implementations;
 
 import com.projet2.api.DAO.IChoixRepository;
 import com.projet2.api.Entities.ChoixEntity;
+import com.projet2.api.Entities.EntrepriseEntity;
+import com.projet2.api.Entities.EtudiantEntity;
 import com.projet2.api.Enums.RoleEnum;
 import com.projet2.api.Services.IChoixService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +71,22 @@ public class ChoixServiceImpl implements IChoixService {
         }
         else{
             return 0;
+        }
+    }
+
+    @Override
+    public void insertDefaultChoice(EtudiantEntity etu, EntrepriseEntity ent) {
+        ChoixEntity existedChoice = choixRepository.findByIdEntrepriseAndIdEtudiant(ent.getIdEntreprise(),etu.getIdEtudiant());
+
+        if(existedChoice == null) {
+            ChoixEntity c = new ChoixEntity();
+            c.setChoixEntreprise(0);
+            c.setChoixEtudiant(0);
+            c.setIdEntreprise(ent.getIdEntreprise());
+            c.setIdEtudiant(etu.getIdEtudiant());
+            c.setSuperMatchEntreprise(0);
+            c.setSuperMatchEtudiant(0);
+            choixRepository.save(c);
         }
     }
 

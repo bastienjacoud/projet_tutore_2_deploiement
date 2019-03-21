@@ -1,7 +1,10 @@
 package com.projet2.api.DAO;
 
 import com.projet2.api.Entities.ChoixEntity;
+import com.projet2.api.Entities.EntrepriseEntity;
+import com.projet2.api.Entities.EtudiantEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

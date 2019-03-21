@@ -20,7 +20,7 @@ public class ParametresPlanningFilter implements Filter {
             throw new ServletException(e.getMessage());
         }
         if(!choicesAvailable){
-            throw new ServletException("Les choix ne sont pas disponibles actuellement.");
+            throw new ServletException("Les plannings ne sont pas disponibles actuellement.");
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
