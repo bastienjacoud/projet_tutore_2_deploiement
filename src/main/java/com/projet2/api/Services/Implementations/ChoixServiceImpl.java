@@ -160,15 +160,9 @@ public class ChoixServiceImpl implements IChoixService {
             oldValues = oldValues.stream().map(v -> {
                 if(!idList.contains(v.getIdEntreprise())){
                     v.setChoixEtudiant(0);
-                    v.setChoixEntreprise(0);
-                    v.setSuperMatchEtudiant(0);
-                    v.setSuperMatchEntreprise(0);
                 }
                 else if(!idSuperMatchList.contains(v.getIdEntreprise())){
-                    v.setChoixEtudiant(0);
-                    v.setChoixEntreprise(0);
                     v.setSuperMatchEtudiant(0);
-                    v.setSuperMatchEntreprise(0);
                 }
                 return v;
             }).collect(Collectors.toList());
@@ -177,15 +171,9 @@ public class ChoixServiceImpl implements IChoixService {
             oldValues = choixRepository.findAllByIdEntreprise(id);
             oldValues = oldValues.stream().map(v -> {
                 if(!idList.contains(v.getIdEtudiant())){
-                    v.setChoixEtudiant(0);
                     v.setChoixEntreprise(0);
-                    v.setSuperMatchEtudiant(0);
-                    v.setSuperMatchEntreprise(0);
                 }
                 else if(!idSuperMatchList.contains(v.getIdEtudiant())){
-                    v.setChoixEtudiant(0);
-                    v.setChoixEntreprise(0);
-                    v.setSuperMatchEtudiant(0);
                     v.setSuperMatchEntreprise(0);
                 }
                 return v;
