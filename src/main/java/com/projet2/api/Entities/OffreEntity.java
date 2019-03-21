@@ -10,6 +10,7 @@ public class OffreEntity {
     private Integer idOffre;
     private Integer idEntreprise;
     private byte[] offre;
+    private String titre;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,5 +58,15 @@ public class OffreEntity {
         int result = Objects.hash(idOffre, idEntreprise);
         result = 31 * result + Arrays.hashCode(offre);
         return result;
+    }
+
+    @Basic
+    @Column(name = "titre")
+    public String getTitre() {
+        return titre;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
     }
 }
